@@ -1,71 +1,77 @@
-// src/App.jsx
-import React, { useState } from 'react';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 
-const winningCodes = ["23", "178", "241"]; // Codici vincenti
+const winningCodes = ["027", "158", "299"]; // ← Qui sono i 3 codici vincenti a caso
 
 function App() {
-  const [code, setCode] = useState('');
-  const [step, setStep] = useState('insert');
+  const [code, setCode] = useState("");
+  const [submitted, setSubmitted] = useState(false);
   const [isWinner, setIsWinner] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    const cleanedCode = code.trim();
-    if (cleanedCode === '' || isNaN(cleanedCode)) return;
-    setIsWinner(winningCodes.includes(cleanedCode));
-    setStep('video');
+    const trimmedCode = code.trim();
+
+    // Regex per validare formato esatto "001" fino a "300"
+    const validCode = /^([0-9]{3})$/;
+
+    if (!validCode.test(trimmedCode)) {
+      setError("Inserisci il numero che ti è stato fornito correttamente.");
+      return;
+    }
+
+    const numericValue = parseInt(trimmedCode);
+    if (numericValue < 1 || numericValue > 300) {
+      setError("Inserisci il numero che ti è stato fornito correttamente.");
+      return;
+    }
+
+    setError("");
+    setIsWinner(winningCodes.includes(trimmedCode));
+    setSubmitted(true);
   };
 
-  const handleVideoEnd = () => {
-    setStep('result');
-  };
-
-  return (
-    <div className="App">
-      {step === 'insert' && (
-        <div className="code-screen">
-          <h1>CRAZY X MANSAUCE CLUB</h1>
-          <input
-            type="text"
-            placeholder="Inserisci il tuo codice"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <button onClick={handleSubmit}>Invia</button>
-        </div>
-      )}
-
-      {step === 'video' && (
-        <div className="video-screen">
-          <video
-            src={isWinner ? '/winner.mp4' : '/loser.mp4'}
-            autoPlay
-            onEnded={handleVideoEnd}
-            className="full-video"
-            playsInline
-          ></video>
-        </div>
-      )}
-
-      {step === 'result' && (
-        <div className="result-screen">
-          <h1 className="result-text">
-            {isWinner ? '🎉 HAI VINTO! 🎉' : '😢 HAI PERSO 😢'}
-          </h1>
-          {!isWinner && (
-            <p className="preorder-text">
-              Clicca qui per preordinare la tua maglietta: <br />
-              <a
-                href="https://mansauceclub.it/collections/pre-order"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                https://mansauceclub.it/collections/pre-order
-              </a>
-            </p>
+  if (submitted) {
+    return (
+      <div className="video-container">
+        <video
+          src={isWinner ? "/winner.mp4" : "/loser.mp4"}
+          autoPlay
+          playsInline
+          onEnded={() => {}}
+          className="video-player"
+        />
+        <div className="overlay-text">
+          {isWinner ? (
+            <h1 className="win-text">🎉 HAI VINTO! 🎉</h1>
+          ) : (
+            <>
+              <h1 className="lose-text">😢 HAI PERSO 😢</h1>
+              <p className="preorder-link">
+                Clicca qui per preordinare la tua maglietta:<br />
+                <a href="https://mansauceclub.it/collections/pre-order" target="_blank" rel="noopener noreferrer">
+                  mansauceclub.it
+                </a>
+              </p>
+            </>
           )}
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="start-screen">
+      <h1 className="title">CRAZY X MANSAUCE CLUB</h1>
+      <input
+        type="text"
+        placeholder="Inserisci il codice"
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+        className="code-input"
+      />
+      <button onClick={handleSubmit} className="submit-button">INVIA</button>
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 }
