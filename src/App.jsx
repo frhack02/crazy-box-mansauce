@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
-const winningCodes = ["027", "158", "299"]; // ← Qui sono i 3 codici vincenti a caso
+const winningCodes = ["027", "158", "299"]; // Codici vincenti
 
 function App() {
   const [code, setCode] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isWinner, setIsWinner] = useState(false);
   const [error, setError] = useState("");
+  const [videoEnded, setVideoEnded] = useState(false);
+  const videoRef = useRef(null);
 
   const handleSubmit = () => {
     const trimmedCode = code.trim();
-
-    // Regex per validare formato esatto "001" fino a "300"
     const validCode = /^([0-9]{3})$/;
 
     if (!validCode.test(trimmedCode)) {
@@ -29,33 +29,41 @@ function App() {
     setError("");
     setIsWinner(winningCodes.includes(trimmedCode));
     setSubmitted(true);
+    setVideoEnded(false);
   };
 
   if (submitted) {
     return (
       <div className="video-container">
         <video
+          ref={videoRef}
           src={isWinner ? "/winner.mp4" : "/loser.mp4"}
           autoPlay
           playsInline
-          onEnded={() => {}}
+          onEnded={() => setVideoEnded(true)}
           className="video-player"
         />
-        <div className="overlay-text">
-          {isWinner ? (
-            <h1 className="win-text">🎉 HAI VINTO! 🎉</h1>
-          ) : (
-            <>
-              <h1 className="lose-text">😢 HAI PERSO 😢</h1>
-              <p className="preorder-link">
-                Clicca qui per preordinare la tua maglietta:<br />
-                <a href="https://mansauceclub.it/collections/pre-order" target="_blank" rel="noopener noreferrer">
-                  mansauceclub.it
-                </a>
-              </p>
-            </>
-          )}
-        </div>
+        {videoEnded && (
+          <div className="overlay-text">
+            {isWinner ? (
+              <h1 className="win-text">🎉 HAI VINTO! 🎉</h1>
+            ) : (
+              <>
+                <h1 className="lose-text">😢 HAI PERSO 😢</h1>
+                <p className="preorder-link">
+                  Clicca qui per preordinare la tua maglietta:<br />
+                  <a
+                    href="https://mansauceclub.it/collections/pre-order"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    mansauceclub.it
+                  </a>
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -65,12 +73,14 @@ function App() {
       <h1 className="title">CRAZY X MANSAUCE CLUB</h1>
       <input
         type="text"
-        placeholder="Inserisci il codice"
+        placeholder="Inserisci il codice (es. 027)"
         value={code}
         onChange={(e) => setCode(e.target.value)}
         className="code-input"
       />
-      <button onClick={handleSubmit} className="submit-button">INVIA</button>
+      <button onClick={handleSubmit} className="submit-button">
+        INVIA
+      </button>
       {error && <p className="error-text">{error}</p>}
     </div>
   );
