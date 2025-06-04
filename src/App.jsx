@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import "./App.css";
 
-const winningCodes = ["027", "158", "299"]; // Codici vincenti
+const winningCodes = ["023", "140", "208"]; // Codici vincenti
 
 function App() {
   const [code, setCode] = useState("");
