@@ -1,63 +1,65 @@
-import { useState, useEffect } from 'react'
-import './index.css'
+// src/App.jsx
+import React, { useState } from 'react';
+import './App.css';
 
-const App = () => {
+const winningCodes = ["23", "178", "241"]; // Codici vincenti
+
+function App() {
   const [code, setCode] = useState('');
-  const [result, setResult] = useState(null);
-  const [showVideo, setShowVideo] = useState(false);
-  const [videoSrc, setVideoSrc] = useState('');
+  const [step, setStep] = useState('insert');
   const [isWinner, setIsWinner] = useState(false);
-  const [winningCodes, setWinningCodes] = useState([]);
 
-  useEffect(() => {
-    // carica i codici vincenti
-    fetch('/codes.json')
-      .then((res) => res.json())
-      .then((data) => setWinningCodes(data.winningCodes))
-      .catch(() => {
-        console.error('Errore nel caricamento dei codici');
-      });
-  }, []);
+  const handleSubmit = () => {
+    const cleanedCode = code.trim();
+    if (cleanedCode === '' || isNaN(cleanedCode)) return;
+    setIsWinner(winningCodes.includes(cleanedCode));
+    setStep('video');
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (winningCodes.length === 0) {
-      alert('Errore nel caricamento dei codici');
-      return;
-    }
-
-    const isWinning = winningCodes.includes(code.trim());
-    setIsWinner(isWinning);
-    setVideoSrc(isWinning ? '/win.mp4' : '/lose.mp4');
-    setResult(isWinning ? 'HAI VINTO' : 'HAI PERSO');
-    setShowVideo(true);
+  const handleVideoEnd = () => {
+    setStep('result');
   };
 
   return (
-    <div className="container">
-      {!showVideo ? (
-        <div className="intro-screen">
-          <h1 className="title">CRAZY X MANSAUCE CLUB</h1>
-          <form onSubmit={handleSubmit} className="form">
-            <input
-              type="text"
-              placeholder="Inserisci il tuo codice"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              required
-            />
-            <button type="submit">INVIA</button>
-          </form>
+    <div className="App">
+      {step === 'insert' && (
+        <div className="code-screen">
+          <h1>CRAZY X MANSAUCE CLUB</h1>
+          <input
+            type="text"
+            placeholder="Inserisci il tuo codice"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <button onClick={handleSubmit}>Invia</button>
         </div>
-      ) : (
-        <div className="video-container">
-          <video src={videoSrc} autoPlay onEnded={() => setShowVideo(false)} />
-          <h1 className="result">{result}</h1>
+      )}
+
+      {step === 'video' && (
+        <div className="video-screen">
+          <video
+            src={isWinner ? '/winner.mp4' : '/loser.mp4'}
+            autoPlay
+            onEnded={handleVideoEnd}
+            className="full-video"
+            playsInline
+          ></video>
+        </div>
+      )}
+
+      {step === 'result' && (
+        <div className="result-screen">
+          <h1 className="result-text">
+            {isWinner ? '🎉 HAI VINTO! 🎉' : '😢 HAI PERSO 😢'}
+          </h1>
           {!isWinner && (
-            <p className="preorder">
-              clicca qui per preordinare la tua maglietta:
-              <br />
-              <a href="https://mansauceclub.it/collections/pre-order" target="_blank" rel="noopener noreferrer">
+            <p className="preorder-text">
+              Clicca qui per preordinare la tua maglietta: <br />
+              <a
+                href="https://mansauceclub.it/collections/pre-order"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 https://mansauceclub.it/collections/pre-order
               </a>
             </p>
@@ -66,6 +68,6 @@ const App = () => {
       )}
     </div>
   );
-};
+}
 
 export default App;
