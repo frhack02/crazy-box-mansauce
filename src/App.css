@@ -30,6 +30,7 @@ html, body, #root, .container {
   font-size: 1.8rem;
   margin-bottom: 20px;
   text-shadow: 2px 2px 4px #007bff;
+  font-family: 'Impact', 'Arial Black', sans-serif;
 }
 
 .code-input {
