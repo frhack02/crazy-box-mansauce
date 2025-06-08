@@ -29,6 +29,7 @@ html, body, #root, .container {
 .title {
   font-size: 1.8rem;
   margin-bottom: 20px;
+  text-shadow: 2px 2px 4px #007bff;
 }
 
 .code-input {
@@ -70,7 +71,7 @@ html, body, #root, .container {
   animation: pop 1s ease-out forwards;
   transform: scale(0);
   color: white;
-  text-shadow: 2px 2px 4px #ff00ff;
+  text-shadow: 2px 2px 4px #007bff;
 }
 
 @keyframes pop {
