@@ -65,10 +65,10 @@ function App() {
       {videoEnded && (
         <div className="result-screen">
           {isWinner ? (
-            <h1 className="win-text">🎉 HAI VINTO! 🎉</h1>
+            <h1 className="win-text">HAI VINTO!</h1>
           ) : (
             <>
-              <h1 className="lose-text">😢 HAI PERSO 😢</h1>
+              <h1 className="lose-text">HAI PERSO</h1>
               <p className="preorder-link">
                 Clicca qui per preordinare la tua maglietta:<br />
                 <a
